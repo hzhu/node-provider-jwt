@@ -15,6 +15,11 @@ const nextConfig = {
     };
     return config;
   },
+  reactStrictMode: true,
+  productionBrowserSourceMaps: true, // To get source maps in production
+  devIndicators: {
+    buildActivity: true,
+  },
 };
 
 export default withBundleAnalyzer(nextConfig);

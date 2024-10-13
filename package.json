@@ -11,13 +11,16 @@
   "dependencies": {
     "@next/bundle-analyzer": "^14.2.3",
     "@tanstack/react-query": ">=5.45.1",
+    "jsonwebtoken": "^9.0.2",
     "next": "14.2.15",
+    "pino-pretty": "^11.2.2",
     "react": "18.3.1",
     "react-dom": "18.3.1",
     "viem": "^2.21.23",
     "wagmi": "^2.12.17"
   },
   "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^20.12.10",
     "@types/react": ">=18.3.1",
     "@types/react-dom": ">=18.3.0",
