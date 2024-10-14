@@ -2,7 +2,8 @@ import { http, cookieStorage, createConfig, createStorage } from "wagmi";
 import { mainnet, optimism, sepolia } from "wagmi/chains";
 import { injected, metaMask, walletConnect } from "wagmi/connectors";
 
-export function getConfig() {
+export function getConfig(jwt: string) {
+  const fetchOptions = { headers: { Authorization: `Bearer ${jwt}` } };
   return createConfig({
     chains: [mainnet, sepolia, optimism],
     connectors: [
@@ -17,9 +18,15 @@ export function getConfig() {
     }),
     ssr: true,
     transports: {
-      [mainnet.id]: http(),
-      [sepolia.id]: http(),
-      [optimism.id]: http(),
+      [mainnet.id]: http("https://eth-mainnet.g.alchemy.com/v2", {
+        fetchOptions,
+      }),
+      [sepolia.id]: http("https://eth-sepolia.g.alchemy.com/v2", {
+        fetchOptions,
+      }),
+      [optimism.id]: http("https://opt-mainnet.g.alchemy.com/v2", {
+        fetchOptions,
+      }),
     },
   });
 }

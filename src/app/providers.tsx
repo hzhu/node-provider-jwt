@@ -1,17 +1,84 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useMemo, useState, useEffect } from "react";
 import { type State, WagmiProvider } from "wagmi";
-
 import { getConfig } from "../wagmi";
+
+export default function useToken() {
+  const [accessToken, setAccessToken] = useState<string>("");
+
+  useEffect(() => {
+    const BASE_URL = window.location.origin;
+    const fetchAccessToken = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/api/token`, {
+          method: "POST",
+          cache: "no-store",
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          setAccessToken(data.jwt);
+        } else {
+          throw new Error(response.statusText);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    // Fetch the initial access token on page load
+    fetchAccessToken();
+
+    const intervalId = setInterval(async () => {
+      try {
+        console.log(`⏳ Fetching a new JWT and rotating the refresh token…`);
+        const response = await fetch(`${BASE_URL}/api/refresh`, {
+          method: "POST",
+          cache: "no-store",
+          credentials: "include",
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(`❌ Failed to refresh token: ${response.statusText}`);
+        }
+
+        if (data.accessToken) {
+          setAccessToken(data.accessToken); // Update the access token
+          console.log(
+            `✅ Successfully updated the frontend app with a new JWT.`
+          );
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }, 4 * 60 * 1000); // Since the token expires every 5 minutes, refresh it 1 minute before expiry—that is, refresh every 4 minutes.
+
+    return () => clearInterval(intervalId); // Clean up interval on component unmount
+  }, []);
+
+  return { accessToken };
+}
 
 export function Providers(props: {
   children: ReactNode;
   initialState?: State;
+  jwt?: string;
 }) {
-  const [config] = useState(() => getConfig());
+  const { accessToken } = useToken();
+
+  const config = useMemo(() => {
+    return getConfig(accessToken);
+  }, [accessToken]);
+
   const [queryClient] = useState(() => new QueryClient());
+
+  if (!accessToken) {
+    return <div>Loading…</div>;
+  }
 
   return (
     <WagmiProvider config={config} initialState={props.initialState}>
