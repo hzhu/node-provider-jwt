@@ -10,27 +10,6 @@ export default function useToken() {
 
   useEffect(() => {
     const BASE_URL = window.location.origin;
-    const fetchAccessToken = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/api/token`, {
-          method: "POST",
-          cache: "no-store",
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-          setAccessToken(data.jwt);
-        } else {
-          throw new Error(response.statusText);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    // Fetch the initial access token on page load
-    fetchAccessToken();
 
     const intervalId = setInterval(async () => {
       try {
@@ -70,15 +49,12 @@ export function Providers(props: {
 }) {
   const { accessToken } = useToken();
 
-  const config = useMemo(() => {
-    return getConfig(accessToken);
-  }, [accessToken]);
+  const config = useMemo(
+    () => getConfig(accessToken || props.jwt),
+    [props.jwt, accessToken]
+  );
 
   const [queryClient] = useState(() => new QueryClient());
-
-  if (!accessToken) {
-    return <div>Loading…</div>;
-  }
 
   return (
     <WagmiProvider config={config} initialState={props.initialState}>

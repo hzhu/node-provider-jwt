@@ -2,7 +2,7 @@ import { http, cookieStorage, createConfig, createStorage } from "wagmi";
 import { mainnet, optimism, sepolia } from "wagmi/chains";
 import { injected, metaMask, walletConnect } from "wagmi/connectors";
 
-export function getConfig(jwt: string) {
+export function getConfig(jwt?: string) {
   const fetchOptions = { headers: { Authorization: `Bearer ${jwt}` } };
   return createConfig({
     chains: [mainnet, sepolia, optimism],

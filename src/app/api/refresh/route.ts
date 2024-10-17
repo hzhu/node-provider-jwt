@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     const newAccessToken = generateJWT();
     // Rotate the refresh token (generate a new one)
     const newRefreshToken = jwt.sign({}, process.env.REFRESH_TOKEN_SECRET, {
-      expiresIn: "1d",
+      expiresIn: "10m",
       algorithm: "HS256",
     });
     // Create the new response and set the new refresh token in the HTTP-only cookie

@@ -1,9 +1,7 @@
 const jwt = require("jsonwebtoken");
 
-// Generate a refresh token to allow refreshing the access token
-// Generate a refresh token using HS256 algorithm
 const refreshToken = jwt.sign({}, process.env.REFRESH_TOKEN_SECRET, {
-  expiresIn: "1d",
+  expiresIn: "10m",
   algorithm: "HS256",
 });
 
@@ -12,7 +10,7 @@ const isProduction = process.env.NODE_ENV === "production";
 export async function POST() {
   const jwt = generateJWT();
 
-  const maxAge = 60 * 60 * 24; // 1 day in seconds
+  const maxAge = 60 * 10; // 10 minutes in seconds
 
   return Response.json(
     { jwt },
