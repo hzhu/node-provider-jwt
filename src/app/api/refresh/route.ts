@@ -40,7 +40,7 @@ export async function POST(req: Request) {
     response.headers.set(
       "Set-Cookie",
       `refreshToken=${newRefreshToken}; HttpOnly; Path=/; Max-Age=${
-        60 * 30 // 30 minutes in seconds
+        60 * 10 // 10 minutes in seconds
       }; ${
         process.env.NODE_ENV === "production" ? "Secure;" : ""
       } SameSite=Strict`
