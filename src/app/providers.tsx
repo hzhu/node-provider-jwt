@@ -3,7 +3,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type ReactNode, useMemo, useState, useEffect } from "react";
 import { type State, WagmiProvider } from "wagmi";
-import { getConfig } from "../wagmi";
+import { getConfig } from "../lib/wagmi";
 
 export default function useToken() {
   const [accessToken, setAccessToken] = useState<string>("");

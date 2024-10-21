@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { headers } from "next/headers";
 import { type ReactNode } from "react";
+
 import { cookieToInitialState } from "wagmi";
 import "./globals.css";
 
-import { getConfig } from "../wagmi";
+import { getConfig } from "../lib/wagmi";
 import { Providers } from "./providers";
+import { generateJWT } from "../lib/generateJWT";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -16,17 +18,7 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout(props: { children: ReactNode }) {
-  const baseUrl = getBaseUrl();
-  const response = await fetch(`${baseUrl}/api/token`, {
-    method: "POST",
-    cache: "no-store",
-  });
-  const { jwt } = await response.json();
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch JWT: ${response.statusText}`);
-  }
-
+  const jwt = await generateJWT();
   const initialState = cookieToInitialState(
     getConfig(jwt),
     headers().get("cookie")
@@ -41,12 +33,4 @@ export default async function RootLayout(props: { children: ReactNode }) {
       </body>
     </html>
   );
-}
-
-function getBaseUrl() {
-  if (process.env.VERCEL_ENV === "development") {
-    return "http://localhost:3000";
-  }
-
-  return `https://${process.env.VERCEL_URL}`;
 }

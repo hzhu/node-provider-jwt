@@ -1,11 +1,11 @@
 import { SignJWT } from "jose";
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 if (!process.env.REFRESH_TOKEN_SECRET) {
   throw new Error("Missing REFRESH_TOKEN_SECRET");
 }
 
-export async function middleware(request: NextRequest) {
+export async function middleware() {
   const secret = new TextEncoder().encode(process.env.REFRESH_TOKEN_SECRET);
 
   const newRefreshToken = await new SignJWT({})
@@ -22,7 +22,7 @@ export async function middleware(request: NextRequest) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     path: "/",
-    maxAge: 60 * 60 * 24, // 1 day in seconds
+    maxAge: 60 * 10, // 10 minutes in seconds
   });
 
   return response;
