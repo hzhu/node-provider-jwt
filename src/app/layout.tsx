@@ -19,10 +19,10 @@ export const metadata: Metadata = {
 
 export default async function RootLayout(props: { children: ReactNode }) {
   const jwt = await generateJWT();
-  const initialState = cookieToInitialState(
-    getConfig(jwt),
-    headers().get("cookie")
-  );
+  const headersList = await headers();
+  const cookie = headersList.get("cookie");
+
+  const initialState = cookieToInitialState(getConfig(jwt), cookie);
 
   return (
     <html lang="en">
