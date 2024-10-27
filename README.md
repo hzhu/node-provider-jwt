@@ -26,7 +26,7 @@ Follow these steps to set up the project locally:
 ### Prerequisites
 
 - Node.js
-- npm
+- [bun](https://bun.sh)
 
 ### Environment Variables
 
@@ -44,6 +44,6 @@ NEXT_PUBLIC_WC_PROJECT_ID=<Your WalletConnect Project ID>
 To run the application locally, run:
 
 ```bash
-npm install
-npm run dev
+bun install
+bun run dev
 ```
