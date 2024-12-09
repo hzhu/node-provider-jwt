@@ -11,7 +11,11 @@ export function Account() {
   return (
     <div>
       {ensAvatar && <img alt="ENS Avatar" src={ensAvatar} />}
-      {address && <div>{ensName ? `${ensName} (${address})` : address}</div>}
+      {address && (
+        <div className="my-3">
+          {ensName ? `${ensName} (${address})` : address}
+        </div>
+      )}
 
       <button
         onClick={() => disconnect()}
