@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Providers } from "./providers";
-import { generateJWT } from "./api/get-jwt/route";
+import { generateJWT } from "@/app/lib/generate-jwt";
 import "./globals.css";
 
 const geistSans = localFont({
