@@ -1,0 +1,22 @@
+diff --git a/node_modules/viem/_esm/utils/rpc/http.js b/node_modules/viem/_esm/utils/rpc/http.js
+index bbc34c4..16327f2 100644
+--- a/node_modules/viem/_esm/utils/rpc/http.js
++++ b/node_modules/viem/_esm/utils/rpc/http.js
+@@ -34,7 +34,16 @@ export function getHttpRpcClient(url, options = {}) {
+                         signal: signal_ || (timeout > 0 ? signal : null),
+                     };
+                     const request = new Request(url, init);
+-                    const args = (await onRequest?.(request, init)) ?? { ...init, url };
++                    let args = (await onRequest?.(request, init)) ?? { ...init, url };
++                    if (args instanceof Request) {
++                        const { method: reqMethod, headers: reqHeaders } = args;
++                        args = {
++                            ...init,
++                            method: reqMethod,
++                            headers: Object.fromEntries(reqHeaders.entries()),
++                            url,
++                        };
++                    }
+                     const response = await fetch(args.url ?? url, args);
+                     return response;
+                 }, {
