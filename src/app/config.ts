@@ -1,20 +1,12 @@
 import { decodeJwt } from "jose";
 import { http, createConfig } from "wagmi";
 import { base, mainnet } from "wagmi/chains";
-import {
-  safe,
-  metaMask,
-  walletConnect,
-  coinbaseWallet,
-} from "wagmi/connectors";
-
-const projectId = "ecf05e6e910a7006159c69f03dafbaeb";
+import { metaMask, walletConnect, coinbaseWallet } from "wagmi/connectors";
 
 const connectors = [
-  safe(),
   metaMask(),
   coinbaseWallet(),
-  walletConnect({ projectId }),
+  walletConnect({ projectId: process.env.NEXT_PUBLIC_WC_PROJECT_ID! }),
 ];
 
 export const getWagmiConfig = (initialJwt: string) => {
@@ -23,32 +15,14 @@ export const getWagmiConfig = (initialJwt: string) => {
     connectors,
     transports: {
       [mainnet.id]: http("https://eth-mainnet.g.alchemy.com/v2", {
-        onFetchRequest: (request) => {
-          console.log("fetch");
-          const clonedRequest = request.clone();
-          const isInitialJwtExpired = isJwtExpired(initialJwt);
-
-          if (!isInitialJwtExpired) {
-            console.log("using initial jwt");
-            clonedRequest.headers.set("Authorization", `Bearer ${initialJwt}`);
-            return clonedRequest;
-          } else {
-            let jwt = window.localStorage.getItem("node-provider-jwt");
-
-            if (!jwt) {
-              console.log(
-                "JWT is not yet set in localStorage. Fallback to default RPC."
-              );
-              return new Request(
-                mainnet.rpcUrls.default.http[0],
-                clonedRequest
-              );
-            } else {
-              clonedRequest.headers.set("Authorization", `Bearer ${jwt}`);
-              console.log("using jwt from localStorage");
-              return clonedRequest;
-            }
-          }
+        onFetchRequest: (_, init) => {
+          return {
+            ...init,
+            headers: {
+              ...init.headers,
+              Authorization: `Bearer ${initialJwt}`,
+            },
+          };
         },
       }),
       [base.id]: http(),
